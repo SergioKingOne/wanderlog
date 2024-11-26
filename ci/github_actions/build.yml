@@ -1,0 +1,44 @@
+name: Build Docker Image
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install Dependencies
+        run: |
+          cd app
+          npm install
+
+      - name: Run Linter
+        run: |
+          cd app
+          npm run lint
+
+      - name: Run Tests
+        run: |
+          cd app
+          npm test
+
+      - name: Build Docker Image
+        run: |
+          docker build -t my-web-app:latest -f docker/Dockerfile .
+
+      - name: Save Docker Image as Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: docker-image
+          path: my-web-app:latest
