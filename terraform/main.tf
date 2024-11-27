@@ -19,7 +19,7 @@ module "rds" {
   db_username        = var.db_username
   db_password        = var.db_password
   db_name            = var.db_name
-  security_group_ids = [module.ecs.security_group_id]
+  security_group_ids = [module.vpc.ecs_security_group_id]
 }
 
 module "ecs" {

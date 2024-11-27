@@ -9,7 +9,7 @@
     "test": "jest",
     "lint": "eslint ."
   },
-  "author": "Your Name",
+  "author": "Sergio Robayo",
   "license": "MIT",
   "dependencies": {
     "dotenv": "^16.0.3",
