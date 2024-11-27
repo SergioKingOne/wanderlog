@@ -1,0 +1,9 @@
+# Environment variables
+.env
+
+# Terraform state files
+terraform.tfstate
+terraform.tfstate.backup
+
+# Docker build cache
+.docker/

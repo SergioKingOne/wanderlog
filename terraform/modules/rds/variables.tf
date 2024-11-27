@@ -23,3 +23,8 @@ variable "db_name" {
   description = "Initial database name"
   type        = string
 }
+
+variable "security_group_ids" {
+  description = "List of security group IDs to allow access to RDS"
+  type        = list(string)
+}

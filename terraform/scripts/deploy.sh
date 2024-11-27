@@ -2,14 +2,16 @@
 
 set -e
 
-# Initialize Terraform
+echo "Initializing Terraform..."
 terraform init
 
-# Validate Terraform files
+echo "Validating Terraform configuration..."
 terraform validate
 
-# Plan Terraform deployment
+echo "Planning Terraform deployment..."
 terraform plan -out=tfplan
 
-# Apply Terraform deployment
+echo "Applying Terraform deployment..."
 terraform apply tfplan
+
+echo "Deployment completed successfully."

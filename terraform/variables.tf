@@ -1,11 +1,11 @@
 variable "aws_region" {
-  description = "AWS region to deploy resources"
+  description = "AWS region"
   type        = string
   default     = "us-east-1"
 }
 
 variable "vpc_cidr" {
-  description = "CIDR block for the VPC"
+  description = "CIDR block for VPC"
   type        = string
   default     = "10.0.0.0/16"
 }
@@ -25,7 +25,7 @@ variable "private_subnets" {
 variable "db_username" {
   description = "Database admin username"
   type        = string
-  default     = "admin"
+  sensitive   = true
 }
 
 variable "db_password" {
@@ -35,31 +35,42 @@ variable "db_password" {
 }
 
 variable "db_name" {
-  description = "Initial database name"
+  description = "Name of the database"
   type        = string
-  default     = "mywebappdb"
+  default     = "webappdb"
 }
 
 variable "ecs_cluster_name" {
-  description = "Name of the ECS Cluster"
+  description = "Name of the ECS cluster"
   type        = string
-  default     = "my-web-app-cluster"
+  default     = "web-app-cluster"
 }
 
 variable "ecr_repository_name" {
   description = "Name of the ECR repository"
   type        = string
-  default     = "my-web-app-repo"
+  default     = "web-app-repo"
 }
 
 variable "app_port" {
-  description = "Port on which the application runs"
+  description = "Port the application runs on"
   type        = number
   default     = 3000
 }
 
 variable "desired_count" {
-  description = "Number of ECS tasks"
+  description = "Desired number of ECS tasks"
   type        = number
-  default     = 1
+  default     = 2
+}
+
+variable "api_key" {
+  description = "API key for authentication"
+  type        = string
+  sensitive   = true
+}
+
+variable "alb_security_group_id" {
+  description = "Security group ID for ALB"
+  type        = string
 }
