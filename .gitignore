@@ -11,3 +11,7 @@ terraform.tfstate.backup
 .docker/
 
 notes.md
+
+# App
+app/.env
+app/node_modules
