@@ -1,9 +1,9 @@
 resource "aws_db_subnet_group" "main" {
-  name       = "my-web-app-db-subnet-group"
+  name       = "cloudfusion-db-subnet-group"
   subnet_ids = var.subnet_ids
 
   tags = {
-    Name = "my-web-app-db-subnet-group"
+    Name = "cloudfusion-db-subnet-group"
   }
 }
 
@@ -32,7 +32,7 @@ resource "aws_security_group" "rds_sg" {
 }
 
 resource "aws_db_instance" "default" {
-  identifier                 = "my-web-app-db"
+  identifier                 = "cloudfusion-db"
   engine                     = "postgres"
   engine_version             = "14.5"
   instance_class             = "db.t3.micro"
@@ -50,6 +50,6 @@ resource "aws_db_instance" "default" {
   backup_retention_period    = 7
 
   tags = {
-    Name = "my-web-app-db"
+    Name = "cloudfusion-db"
   }
 }

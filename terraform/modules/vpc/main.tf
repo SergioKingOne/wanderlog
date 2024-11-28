@@ -5,14 +5,14 @@ resource "aws_vpc" "main" {
   enable_dns_support   = true
   enable_dns_hostnames = true
   tags = {
-    Name = "my-web-app-vpc"
+    Name = "cloudfusion-vpc"
   }
 }
 
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.main.id
   tags = {
-    Name = "my-web-app-igw"
+    Name = "cloudfusion-igw"
   }
 }
 
@@ -23,7 +23,7 @@ resource "aws_subnet" "public" {
   map_public_ip_on_launch = true
   availability_zone       = data.aws_availability_zones.available.names[count.index]
   tags = {
-    Name = "my-web-app-public-subnet-${count.index + 1}"
+    Name = "cloudfusion-public-subnet-${count.index + 1}"
   }
 }
 
@@ -33,7 +33,7 @@ resource "aws_subnet" "private" {
   cidr_block        = var.private_subnets[count.index]
   availability_zone = data.aws_availability_zones.available.names[count.index]
   tags = {
-    Name = "my-web-app-private-subnet-${count.index + 1}"
+    Name = "cloudfusion-private-subnet-${count.index + 1}"
   }
 }
 
@@ -46,7 +46,7 @@ resource "aws_nat_gateway" "nat" {
   allocation_id = aws_eip.nat[count.index].id
   subnet_id     = aws_subnet.public[count.index].id
   tags = {
-    Name = "my-web-app-nat-${count.index + 1}"
+    Name = "cloudfusion-nat-${count.index + 1}"
   }
 }
 
@@ -59,7 +59,7 @@ resource "aws_route_table" "public" {
   }
 
   tags = {
-    Name = "my-web-app-public-rt"
+    Name = "cloudfusion-public-rt"
   }
 }
 
@@ -72,7 +72,7 @@ resource "aws_route_table" "private" {
   }
 
   tags = {
-    Name = "my-web-app-private-rt"
+    Name = "cloudfusion-private-rt"
   }
 }
 

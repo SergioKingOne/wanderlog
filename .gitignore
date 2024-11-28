@@ -9,3 +9,5 @@ terraform.tfstate.backup
 
 # Docker build cache
 .docker/
+
+notes.md
