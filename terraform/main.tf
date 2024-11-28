@@ -38,9 +38,5 @@ module "ecs" {
   db_name               = var.db_name
   api_key               = var.api_key
   aws_region            = var.aws_region
-  public_subnets        = module.vpc.public_subnets
-}
-
-module "iam" {
-  source = "./modules/iam"
+  public_subnets        = module.vpc.public_subnets_ids
 }
