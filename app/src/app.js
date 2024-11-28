@@ -2,7 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const userRoutes = require("./routes/userRoutes");
-const { sequelize } = require("./utils/db");
+const { sequelize, syncDatabase } = require("./utils/db");
 
 // Middleware
 app.use(express.json());
@@ -18,8 +18,12 @@ app.get("/health", (req, res) => {
 // Database Connection
 sequelize
   .authenticate()
-  .then(() => {
+  .then(async () => {
     console.log("Database connected...");
+
+    // Sync database
+    await syncDatabase();
+
     // Start Server
     const PORT = process.env.PORT || 3000;
     app.listen(PORT, () => {
