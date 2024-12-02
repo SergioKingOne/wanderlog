@@ -55,7 +55,7 @@ variable "ecr_repository_name" {
 variable "app_port" {
   description = "Port the application runs on"
   type        = number
-  default     = 3000
+  default     = 5000
 }
 
 variable "desired_count" {

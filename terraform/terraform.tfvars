@@ -5,7 +5,7 @@ private_subnets     = ["10.0.11.0/24", "10.0.12.0/24"]
 db_name             = "webappdb"
 ecs_cluster_name    = "web-app-cluster"
 ecr_repository_name = "web-app-repo"
-app_port            = 3000
+app_port            = 5000
 desired_count       = 2
 
 # TODO: These sensitive values should be set via environment variables or secure parameter store
