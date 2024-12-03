@@ -30,3 +30,14 @@ pub struct CreateTravelEntry {
     #[serde(rename = "visitDate")]
     pub visit_date: DateTime<Utc>,
 }
+
+#[derive(Debug, Deserialize)]
+pub struct UpdateTravelEntry {
+    pub title: Option<String>,
+    pub description: Option<String>,
+    pub location: Option<String>,
+    pub latitude: Option<f64>,
+    pub longitude: Option<f64>,
+    #[serde(rename = "visitDate")]
+    pub visit_date: Option<DateTime<Utc>>,
+}

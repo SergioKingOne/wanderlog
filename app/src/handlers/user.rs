@@ -9,7 +9,9 @@ pub async fn create_user(
     user: web::Json<CreateUser>,
 ) -> Result<impl Responder, AppError> {
     if user.name.is_empty() || user.email.is_empty() {
-        return Err(AppError::Validation("Name and email are required".into()));
+        return Err(AppError::ValidationError(
+            "Name and email are required".into(),
+        ));
     }
 
     let user = sqlx::query!(
