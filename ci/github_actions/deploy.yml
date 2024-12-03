@@ -39,5 +39,5 @@ jobs:
         run: |
           aws ecs update-service \
             --cluster $(terraform output -raw ecs_cluster_id) \
-            --service cloudfusion-service \
+            --service wanderlog-service \
             --force-new-deployment

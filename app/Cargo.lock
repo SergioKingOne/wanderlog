@@ -615,21 +615,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "cloudfusion"
-version = "0.1.0"
-dependencies = [
- "actix-web",
- "chrono",
- "dotenv",
- "env_logger",
- "serde",
- "serde_json",
- "sqlx",
- "thiserror 2.0.3",
- "tokio",
-]
-
-[[package]]
 name = "colorchoice"
 version = "1.0.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2787,6 +2772,21 @@ name = "waker-fn"
 version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "317211a0dc0ceedd78fb2ca9a44aed3d7b9b26f81870d485c07122b4350673b7"
+
+[[package]]
+name = "wanderlog"
+version = "0.1.0"
+dependencies = [
+ "actix-web",
+ "chrono",
+ "dotenv",
+ "env_logger",
+ "serde",
+ "serde_json",
+ "sqlx",
+ "thiserror 2.0.3",
+ "tokio",
+]
 
 [[package]]
 name = "wasi"

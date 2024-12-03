@@ -14,5 +14,5 @@ cd terraform
 # Update ECS service
 aws ecs update-service \
     --cluster $(terraform output -raw ecs_cluster_id) \
-    --service cloudfusion-service \
+    --service wanderlog-service \
     --force-new-deployment

@@ -1,9 +1,9 @@
 resource "aws_db_subnet_group" "main" {
-  name       = "cloudfusion-db-subnet-group"
+  name       = "wanderlog-db-subnet-group"
   subnet_ids = var.subnet_ids
 
   tags = {
-    Name = "cloudfusion-db-subnet-group"
+    Name = "wanderlog-db-subnet-group"
   }
 }
 
@@ -32,7 +32,7 @@ resource "aws_security_group" "rds_sg" {
 }
 
 resource "aws_db_instance" "default" {
-  identifier                 = "cloudfusion-db"
+  identifier                 = "wanderlog-db"
   engine                     = "postgres"
   engine_version             = "14.5"
   instance_class             = "db.t3.micro"
@@ -50,6 +50,6 @@ resource "aws_db_instance" "default" {
   backup_retention_period    = 7
 
   tags = {
-    Name = "cloudfusion-db"
+    Name = "wanderlog-db"
   }
 }
