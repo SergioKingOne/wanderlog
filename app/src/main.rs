@@ -5,7 +5,7 @@ use sqlx::postgres::PgPoolOptions;
 mod errors;
 mod handlers;
 mod models;
-use crate::handlers::user;
+use crate::handlers::{travel_entry, user};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -45,6 +45,14 @@ async fn main() -> std::io::Result<()> {
                         .route("", web::get().to(user::get_users))
                         .route("/{id}", web::get().to(user::get_user_by_id)),
                 ),
+            )
+            .service(
+                web::scope("/travel-entries")
+                    .route("", web::post().to(travel_entry::create_travel_entry))
+                    .route(
+                        "/user/{user_id}",
+                        web::get().to(travel_entry::get_user_travel_entries),
+                    ),
             )
             .wrap(actix_web::middleware::Logger::default())
     })
