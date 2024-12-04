@@ -49,15 +49,13 @@ async fn main() -> std::io::Result<()> {
             .service(
                 web::scope("/travel-entries")
                     .route("", web::post().to(travel_entry::create_travel_entry))
-                    .route("/{entry_id}", web::get().to(travel_entry::get_travel_entry))
                     .route(
-                        "/{entry_id}",
-                        web::put().to(travel_entry::update_travel_entry),
+                        "/user/{user_id}",
+                        web::get().to(travel_entry::get_travel_entry),
                     )
-                    .route(
-                        "/{entry_id}",
-                        web::delete().to(travel_entry::delete_travel_entry),
-                    ),
+                    .route("/{id}", web::get().to(travel_entry::get_travel_entry))
+                    .route("/{id}", web::put().to(travel_entry::update_travel_entry))
+                    .route("/{id}", web::delete().to(travel_entry::delete_travel_entry)),
             )
             .wrap(actix_web::middleware::Logger::default())
     })
