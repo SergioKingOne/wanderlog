@@ -26,14 +26,6 @@ async fn main() -> std::io::Result<()> {
         .await
         .expect("Failed to create pool");
 
-    // Test the connection
-    let result = sqlx::query!("SELECT current_database() as db")
-        .fetch_one(&pool)
-        .await
-        .expect("Failed to query database");
-
-    tracing::info!("Connected to database: {}", result.db.unwrap_or_default());
-
     // Start HTTP server
     HttpServer::new(move || {
         App::new()
