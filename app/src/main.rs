@@ -12,12 +12,12 @@ async fn main() -> std::io::Result<()> {
     // Load environment variables
     dotenv().ok();
 
-    // Initialize logger
-    env_logger::init();
+    // Initialize tracing
+    tracing_subscriber::fmt().with_env_filter("info").init();
 
     let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
 
-    println!("Connecting to database: {}", database_url);
+    tracing::info!("Connecting to database: {}", database_url);
 
     // Create database connection pool
     let pool = PgPoolOptions::new()
@@ -32,7 +32,7 @@ async fn main() -> std::io::Result<()> {
         .await
         .expect("Failed to query database");
 
-    println!("Connected to database: {}", result.db.unwrap_or_default());
+    tracing::info!("Connected to database: {}", result.db.unwrap_or_default());
 
     // Start HTTP server
     HttpServer::new(move || {
