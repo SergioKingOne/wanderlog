@@ -18,7 +18,7 @@ resource "aws_ecs_task_definition" "app" {
 
   container_definitions = jsonencode([
     {
-      name      = "cloudfusion-container"
+      name      = "wanderlog-container"
       image     = var.ecr_repository_url
       essential = true
       portMappings = [
@@ -69,7 +69,7 @@ resource "aws_ecs_service" "app" {
 
   load_balancer {
     target_group_arn = aws_lb_target_group.app.arn
-    container_name   = "cloudfusion-container"
+    container_name   = "wanderlog-container"
     container_port   = var.app_port
   }
 

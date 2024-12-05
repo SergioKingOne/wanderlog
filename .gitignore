@@ -14,4 +14,4 @@ notes.md
 
 # App
 app/.env
-app/node_modules
+target

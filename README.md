@@ -1,8 +1,8 @@
-# Cloudfusion
+# Wanderlog
 
 ## Overview
 
-**Cloudfusion** is a scalable, containerized web application deployed on AWS using Amazon RDS for relational database management and Terraform for Infrastructure as Code (IaC). The application is built with Node.js and Express.js, ensuring a robust and efficient backend.
+**Wanderlog** is a scalable, containerized web application deployed on AWS using Amazon RDS for relational database management and Terraform for Infrastructure as Code (IaC). The application is built with Rust, ensuring a robust and efficient backend.
 
 ## Features
 
@@ -38,8 +38,8 @@
 1. **Clone the Repository**
 
    ```bash
-   git clone https://github.com/yourusername/cloudfusion.git
-   cd cloudfusion
+   git clone https://github.com/yourusername/wanderlog.git
+   cd wanderlog
    ```
 
 2. **Configure Environment Variables**
