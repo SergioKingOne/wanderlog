@@ -5,7 +5,7 @@ use sqlx::postgres::PgPoolOptions;
 mod errors;
 mod handlers;
 mod models;
-use crate::handlers::{travel_entry, user};
+use crate::handlers::{travel_entry, upload, user};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -49,6 +49,10 @@ async fn main() -> std::io::Result<()> {
                     .route("/{id}", web::put().to(travel_entry::update_travel_entry))
                     .route("/{id}", web::delete().to(travel_entry::delete_travel_entry)),
             )
+            .service(web::scope("/uploads").route(
+                "/presigned-url",
+                web::post().to(upload::generate_presigned_url),
+            ))
             .wrap(actix_web::middleware::Logger::default())
     })
     .bind(("0.0.0.0", 5000))?
