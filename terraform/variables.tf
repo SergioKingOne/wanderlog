@@ -74,3 +74,9 @@ variable "alb_security_group_id" {
   description = "Security group ID for ALB"
   type        = string
 }
+
+variable "uploads_bucket_name" {
+  description = "Name of the S3 bucket for file uploads"
+  type        = string
+  default     = "wanderlog-uploads"
+}

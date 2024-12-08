@@ -39,4 +39,10 @@ module "ecs" {
   api_key               = var.api_key
   aws_region            = var.aws_region
   public_subnets        = module.vpc.public_subnets_ids
+  uploads_bucket_arn    = module.s3.bucket_arn
+}
+
+module "s3" {
+  source      = "./modules/s3"
+  bucket_name = var.uploads_bucket_name
 }

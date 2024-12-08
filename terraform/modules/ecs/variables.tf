@@ -74,3 +74,8 @@ variable "api_key" {
   description = "API key for authentication"
   type        = string
 }
+
+variable "uploads_bucket_arn" {
+  description = "ARN of the S3 bucket for uploads"
+  type        = string
+}
