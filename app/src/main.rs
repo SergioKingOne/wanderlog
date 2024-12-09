@@ -47,7 +47,19 @@ async fn main() -> std::io::Result<()> {
                     )
                     .route("/{id}", web::get().to(travel_entry::get_travel_entry))
                     .route("/{id}", web::put().to(travel_entry::update_travel_entry))
-                    .route("/{id}", web::delete().to(travel_entry::delete_travel_entry)),
+                    .route("/{id}", web::delete().to(travel_entry::delete_travel_entry))
+                    .route(
+                        "/{id}/images",
+                        web::post().to(travel_entry::add_image_to_entry),
+                    )
+                    .route(
+                        "/{id}/images",
+                        web::get().to(travel_entry::get_entry_images),
+                    )
+                    .route(
+                        "/{id}/images/{image_id}",
+                        web::delete().to(travel_entry::delete_entry_image),
+                    ),
             )
             .service(web::scope("/uploads").route(
                 "/presigned-url",

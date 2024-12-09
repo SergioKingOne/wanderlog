@@ -41,3 +41,19 @@ pub struct UpdateTravelEntry {
     #[serde(rename = "visitDate")]
     pub visit_date: Option<DateTime<Utc>>,
 }
+
+#[derive(Debug, Serialize, Deserialize, FromRow)]
+pub struct TravelEntryImage {
+    pub id: i32,
+    pub travel_entry_id: i32,
+    pub image_key: String,
+    #[serde(rename = "createdAt")]
+    pub created_at: DateTime<Utc>,
+    #[serde(rename = "updatedAt")]
+    pub updated_at: DateTime<Utc>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct AddTravelEntryImage {
+    pub image_key: String,
+}
