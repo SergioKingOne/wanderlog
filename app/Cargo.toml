@@ -22,3 +22,4 @@ thiserror = "2.0.3"
 aws-sdk-s3 = "1.65.0"
 aws-config = "1.5.10"
 uuid = { version = "1.11.0", features = ["v4"] }
+actix-cors = "0.7.0"

@@ -4,19 +4,30 @@ use crate::models::travel_entry::{
 };
 use actix_web::{web, HttpResponse};
 use sqlx::PgPool;
+use tracing::{error, info};
 
 pub async fn create_travel_entry(
     pool: web::Data<PgPool>,
     entry: web::Json<CreateTravelEntry>,
 ) -> Result<HttpResponse, AppError> {
+    // Log the full incoming request
+    info!(
+        "Attempting to create travel entry. Payload: {:?}, User ID: {}",
+        serde_json::to_value(&*entry).unwrap_or_default(),
+        entry.user_id
+    );
+
     // Validate input
     if entry.title.trim().is_empty() {
-        return Err(AppError::ValidationError(
-            "Title cannot be empty".to_string(),
-        ));
+        let error_msg = "Title cannot be empty";
+        error!(
+            "Validation error creating travel entry. User ID: {}, Error: {}",
+            entry.user_id, error_msg
+        );
+        return Err(AppError::ValidationError(error_msg.to_string()));
     }
 
-    let result = sqlx::query_as!(
+    match sqlx::query_as!(
         TravelEntry,
         r#"
         INSERT INTO travel_entries (user_id, title, description, location, latitude, longitude, visit_date, created_at, updated_at)
@@ -32,9 +43,26 @@ pub async fn create_travel_entry(
         entry.visit_date,
     )
     .fetch_one(pool.get_ref())
-    .await?;
-
-    Ok(HttpResponse::Created().json(result))
+    .await {
+        Ok(result) => {
+            info!(
+                "Successfully created travel entry. ID: {}, User ID: {}, Title: {}, Location: {}",
+                result.id,
+                result.user_id,
+                result.title,
+                result.location
+            );
+            Ok(HttpResponse::Created().json(result))
+        }
+        Err(err) => {
+            error!(
+                "Database error creating travel entry. User ID: {}, Error: {:?}",
+                entry.user_id,
+                err
+            );
+            Err(err.into())
+        }
+    }
 }
 
 pub async fn update_travel_entry(
@@ -200,4 +228,19 @@ pub async fn delete_entry_image(
         Some(_) => Ok(HttpResponse::NoContent().finish()),
         None => Err(AppError::NotFound("Image not found".to_string())),
     }
+}
+
+pub async fn get_all_travel_entries(pool: web::Data<PgPool>) -> Result<HttpResponse, AppError> {
+    let entries = sqlx::query_as!(
+        TravelEntry,
+        r#"
+        SELECT id, user_id, title, description, location, latitude, longitude, visit_date, created_at, updated_at
+        FROM travel_entries
+        ORDER BY created_at DESC
+        "#,
+    )
+    .fetch_all(pool.get_ref())
+    .await?;
+
+    Ok(HttpResponse::Ok().json(entries))
 }

@@ -19,7 +19,7 @@ pub struct TravelEntry {
     pub updated_at: DateTime<Utc>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct CreateTravelEntry {
     pub user_id: i32,
     pub title: String,

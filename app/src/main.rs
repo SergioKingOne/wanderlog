@@ -1,3 +1,4 @@
+use actix_cors::Cors;
 use actix_web::{web, App, HttpServer};
 use dotenv::dotenv;
 use sqlx::postgres::PgPoolOptions;
@@ -28,7 +29,15 @@ async fn main() -> std::io::Result<()> {
 
     // Start HTTP server
     HttpServer::new(move || {
+        // Create CORS middleware
+        let cors = Cors::default()
+            .allow_any_origin()
+            .allow_any_method()
+            .allow_any_header()
+            .max_age(3600);
+
         App::new()
+            .wrap(cors)
             .app_data(web::Data::new(pool.clone()))
             .service(
                 web::scope("/api").service(
@@ -40,6 +49,7 @@ async fn main() -> std::io::Result<()> {
             )
             .service(
                 web::scope("/travel-entries")
+                    .route("", web::get().to(travel_entry::get_all_travel_entries)) // Add this line
                     .route("", web::post().to(travel_entry::create_travel_entry))
                     .route(
                         "/user/{user_id}",
