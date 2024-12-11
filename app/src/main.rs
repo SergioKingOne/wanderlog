@@ -71,10 +71,17 @@ async fn main() -> std::io::Result<()> {
                         web::delete().to(travel_entry::delete_entry_image),
                     ),
             )
-            .service(web::scope("/uploads").route(
-                "/presigned-url",
-                web::post().to(upload::generate_presigned_url),
-            ))
+            .service(
+                web::scope("/uploads")
+                    .route(
+                        "/presigned-url",
+                        web::post().to(upload::generate_presigned_url),
+                    )
+                    .route(
+                        "/download-url",
+                        web::post().to(upload::generate_download_presigned_url),
+                    ),
+            )
             .wrap(actix_web::middleware::Logger::default())
     })
     .bind(("0.0.0.0", 5000))?
