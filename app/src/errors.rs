@@ -1,4 +1,5 @@
 use actix_web::{HttpResponse, ResponseError};
+use aws_sdk_s3::presigning::PresigningConfigError;
 use serde_json::json;
 use thiserror::Error;
 
@@ -13,8 +14,8 @@ pub enum AppError {
     #[error("Invalid input: {0}")]
     ValidationError(String),
 
-    #[error("Unauthorized: {0}")]
-    Unauthorized(String),
+    #[error("Presigning error: {0}")]
+    PresigningError(String),
 }
 
 impl ResponseError for AppError {
@@ -29,9 +30,15 @@ impl ResponseError for AppError {
             AppError::ValidationError(msg) => HttpResponse::BadRequest().json(json!({
                 "error": msg
             })),
-            AppError::Unauthorized(msg) => HttpResponse::Unauthorized().json(json!({
+            AppError::PresigningError(msg) => HttpResponse::InternalServerError().json(json!({
                 "error": msg
             })),
         }
+    }
+}
+
+impl From<PresigningConfigError> for AppError {
+    fn from(error: PresigningConfigError) -> Self {
+        AppError::PresigningError(error.to_string())
     }
 }

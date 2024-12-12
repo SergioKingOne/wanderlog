@@ -1,3 +1,4 @@
+use actix_cors::Cors;
 use actix_web::{web, App, HttpServer};
 use dotenv::dotenv;
 use sqlx::postgres::PgPoolOptions;
@@ -5,7 +6,7 @@ use sqlx::postgres::PgPoolOptions;
 mod errors;
 mod handlers;
 mod models;
-use crate::handlers::{travel_entry, user};
+use crate::handlers::{travel_entry, upload, user};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -28,7 +29,15 @@ async fn main() -> std::io::Result<()> {
 
     // Start HTTP server
     HttpServer::new(move || {
+        // Create CORS middleware
+        let cors = Cors::default()
+            .allow_any_origin()
+            .allow_any_method()
+            .allow_any_header()
+            .max_age(3600);
+
         App::new()
+            .wrap(cors)
             .app_data(web::Data::new(pool.clone()))
             .service(
                 web::scope("/api").service(
@@ -40,6 +49,7 @@ async fn main() -> std::io::Result<()> {
             )
             .service(
                 web::scope("/travel-entries")
+                    .route("", web::get().to(travel_entry::get_all_travel_entries)) // Add this line
                     .route("", web::post().to(travel_entry::create_travel_entry))
                     .route(
                         "/user/{user_id}",
@@ -47,7 +57,30 @@ async fn main() -> std::io::Result<()> {
                     )
                     .route("/{id}", web::get().to(travel_entry::get_travel_entry))
                     .route("/{id}", web::put().to(travel_entry::update_travel_entry))
-                    .route("/{id}", web::delete().to(travel_entry::delete_travel_entry)),
+                    .route("/{id}", web::delete().to(travel_entry::delete_travel_entry))
+                    .route(
+                        "/{id}/images",
+                        web::post().to(travel_entry::add_image_to_entry),
+                    )
+                    .route(
+                        "/{id}/images",
+                        web::get().to(travel_entry::get_entry_images),
+                    )
+                    .route(
+                        "/{id}/images/{image_id}",
+                        web::delete().to(travel_entry::delete_entry_image),
+                    ),
+            )
+            .service(
+                web::scope("/uploads")
+                    .route(
+                        "/presigned-url",
+                        web::post().to(upload::generate_presigned_url),
+                    )
+                    .route(
+                        "/download-url",
+                        web::post().to(upload::generate_download_presigned_url),
+                    ),
             )
             .wrap(actix_web::middleware::Logger::default())
     })
