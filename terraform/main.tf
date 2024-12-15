@@ -46,3 +46,7 @@ module "s3" {
   source      = "./modules/s3"
   bucket_name = var.uploads_bucket_name
 }
+
+module "cognito" {
+  source = "./modules/cognito"
+}
