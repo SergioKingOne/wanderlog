@@ -1,98 +1,122 @@
-# Wanderlog
+# Wanderlog API
+
+A cloud-native travel journal API built with Rust and AWS services.
 
 ## Overview
 
-**Wanderlog** is a scalable, containerized web application deployed on AWS using Amazon RDS for relational database management and Terraform for Infrastructure as Code (IaC). The application is built with Rust, ensuring a robust and efficient backend.
+Wanderlog allows users to create and manage travel entries with location data and images. Built with performance and scalability in mind using Rust and modern cloud architecture.
 
-## Features
+## Tech Stack
 
-- **CRUD Operations**: Manage users with Create, Read, Update, and Delete functionalities.
-- **User Authentication**: Secure API endpoints using API keys.
-- **Containerization**: Dockerized application for consistency across environments.
-- **Infrastructure as Code**: Terraform scripts to provision AWS resources.
-- **CI/CD Pipeline**: Automated build, test, and deployment workflows using GitHub Actions.
-- **Monitoring & Logging**: Integrated with AWS CloudWatch for monitoring application performance.
+- **Backend**: Rust (Actix-web)
+- **Database**: PostgreSQL (AWS RDS)
+- **Storage**: AWS S3
+- **Infrastructure**:
+  - AWS ECS (Container orchestration)
+  - AWS ECR (Container registry)
+  - AWS VPC with public/private subnets
+  - Application Load Balancer
 
-## Technology Stack
+## Key Features
 
-- **Backend**: Node.js, Express.js
-- **Database**: PostgreSQL on Amazon RDS
-- **Containerization**: Docker
-- **Orchestration**: AWS ECS with Fargate
-- **Infrastructure as Code**: Terraform
-- **CI/CD**: GitHub Actions
-- **Monitoring**: AWS CloudWatch
+- User management
+- Travel entry CRUD operations
+- Image upload via S3 presigned URLs
+- Geolocation support
+- Cloud-native architecture
 
-## Getting Started
+## API Endpoints
 
-### Prerequisites
+### Users
 
-- AWS Account
-- AWS CLI installed and configured
-- Terraform installed
-- Docker installed
-- Node.js and npm installed
+- `POST /api/users` - Create user
+- `GET /api/users` - List users
+- `GET /api/users/{id}` - Get user details
 
-### Setup Instructions
+### Travel Entries
 
-1. **Clone the Repository**
+- `POST /api/travel-entries` - Create entry
+- `GET /api/travel-entries` - List entries
+- `PUT /api/travel-entries/{id}` - Update entry
+- `DELETE /api/travel-entries/{id}` - Delete entry
+- `POST /api/travel-entries/{id}/images` - Add image
+- `GET /api/travel-entries/{id}/images` - List entry images
 
-   ```bash
-   git clone https://github.com/yourusername/wanderlog.git
-   cd wanderlog
-   ```
+### Image Upload
 
-2. **Configure Environment Variables**
+- `POST /api/uploads/presigned-url` - Generate S3 upload URL
+- `POST /api/uploads/download-url` - Generate S3 download URL
 
-   Copy `.env.example` to `.env` and fill in the required variables.
+## Infrastructure
 
-   ```bash
-   cp app/.env.example app/.env
-   ```
+### Architecture Diagram
 
-3. **Initialize Terraform**
+```mermaid
+graph TB
+    subgraph "AWS Cloud"
+        subgraph "VPC (10.0.0.0/16)"
+            subgraph "Public Subnets"
+                ALB[Application Load Balancer]
+                NAT1[NAT Gateway AZ1]
+                NAT2[NAT Gateway AZ2]
+            end
 
-   ```bash
-   cd terraform
-   terraform init
-   ```
+            subgraph "Private Subnets"
+                ECS[ECS Cluster]
+                RDS[(RDS PostgreSQL<br/>db.t3.micro)]
+            end
+        end
 
-4. **Deploy Infrastructure**
+        S3[(S3 Bucket<br/>wanderlog-uploads)]
+        ECR[(ECR Registry<br/>web-app-repo)]
 
-   ```bash
-   terraform apply
-   ```
+        Internet((Internet))
+        Client((Client))
 
-5. **Build and Push Docker Image**
+        %% Connections
+        Client --> Internet
+        Internet --> ALB
+        ALB --> ECS
+        ECS --> RDS
+        ECS --> S3
+        ECS --> ECR
 
-   ```bash
-   cd ..
-   ./scripts/build.sh
-   ```
+        %% NAT Gateway connections
+        ECS --> NAT1 & NAT2
+        NAT1 & NAT2 --> Internet
+    end
 
-6. **Deploy Application**
+    %% Styling
+    classDef aws fill:#FF9900,stroke:#232F3E,stroke-width:2px,color:white;
+    classDef external fill:#fff,stroke:#232F3E,stroke-width:2px;
 
-   ```bash
-   ./scripts/deploy.sh
-   ```
-
-7. **Access the Application**
-
-   Navigate to the ALB's DNS name provided in the Terraform outputs.
-
-## Testing
-
-Run unit, integration, and end-to-end tests using Jest.
-
-```bash
-cd app
-npm test
+    class ALB,ECS,RDS,S3,ECR,NAT1,NAT2 aws;
+    class Internet,Client external;
 ```
 
-## Contributing
+### AWS Resources
 
-Contributions are welcome! Please fork the repository and submit a pull request.
+- VPC with 2 public and 2 private subnets across AZs
+  - Public subnets: 10.0.1.0/24, 10.0.2.0/24
+  - Private subnets: 10.0.11.0/24, 10.0.12.0/24
+- NAT Gateways for private subnet internet access
+- RDS instance in private subnet
+  - Endpoint: wanderlog-db.cv4ygmeii92x.us-east-1.rds.amazonaws.com:5432
+- S3 bucket (wanderlog-uploads) for image storage
+- ECS cluster (web-app-cluster) for container orchestration
+- ECR repository: 199614859729.dkr.ecr.us-east-1.amazonaws.com/web-app-repo
 
-## License
+## Development
 
-This project is licensed under the MIT License.
+Requires:
+
+- Rust
+- Docker
+- AWS CLI
+- Terraform
+
+Environment variables needed:
+
+- `DATABASE_URL`
+- `AWS_BUCKET_NAME`
+- AWS credentials
