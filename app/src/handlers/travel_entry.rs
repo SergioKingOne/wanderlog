@@ -72,7 +72,7 @@ pub async fn update_travel_entry(
 ) -> Result<HttpResponse, AppError> {
     let entry_id_value = entry_id.into_inner();
 
-    let entry = sqlx::query_as!(
+    let _entry = sqlx::query_as!(
         TravelEntry,
         r#"
         SELECT * FROM travel_entries WHERE id = $1

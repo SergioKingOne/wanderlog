@@ -8,31 +8,25 @@ pub async fn create_user(
     pool: web::Data<PgPool>,
     user: web::Json<CreateUser>,
 ) -> Result<impl Responder, AppError> {
-    if user.name.is_empty() || user.email.is_empty() {
+    if user.name.is_empty() || user.email.is_empty() || user.cognito_id.is_empty() {
         return Err(AppError::ValidationError(
-            "Name and email are required".into(),
+            "Name, email, and cognito_id are required".into(),
         ));
     }
 
-    let user = sqlx::query!(
+    let user = sqlx::query_as!(
+        User,
         r#"
-        INSERT INTO users (name, email)
-        VALUES ($1, $2)
+        INSERT INTO users (name, email, cognito_id)
+        VALUES ($1, $2, $3)
         RETURNING id, name, email, created_at, updated_at
         "#,
         user.name,
-        user.email
+        user.email,
+        user.cognito_id
     )
     .fetch_one(pool.get_ref())
     .await?;
-
-    let user = User {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        created_at: user.created_at,
-        updated_at: user.updated_at,
-    };
 
     Ok(HttpResponse::Created().json(user))
 }
