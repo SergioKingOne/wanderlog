@@ -3896,6 +3896,7 @@ name = "wanderlog"
 version = "0.1.0"
 dependencies = [
  "actix-cors",
+ "actix-service",
  "actix-web",
  "aws-config",
  "aws-sdk-s3",
