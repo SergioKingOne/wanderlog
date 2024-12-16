@@ -21,7 +21,6 @@ pub struct TravelEntry {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct CreateTravelEntry {
-    pub user_id: i32,
     pub title: String,
     pub description: String,
     pub location: String,

@@ -1,20 +1,36 @@
+use actix_web::{web, HttpMessage, HttpRequest, HttpResponse};
+use sqlx::PgPool;
+use tracing::{error, info};
+
 use crate::errors::AppError;
 use crate::models::travel_entry::{
     AddTravelEntryImage, CreateTravelEntry, TravelEntry, TravelEntryImage, UpdateTravelEntry,
 };
-use actix_web::{web, HttpResponse};
-use sqlx::PgPool;
-use tracing::{error, info};
 
 pub async fn create_travel_entry(
     pool: web::Data<PgPool>,
     entry: web::Json<CreateTravelEntry>,
+    req: HttpRequest,
 ) -> Result<HttpResponse, AppError> {
+    // Bind the extensions to a variable first
+    let extensions = req.extensions();
+    let cognito_id = extensions
+        .get::<String>()
+        .ok_or_else(|| AppError::ValidationError("User not authenticated".into()))?;
+
+    println!("cognito_id: {}", cognito_id);
+
+    // Get the internal user_id from cognito_id
+    let user = sqlx::query!("SELECT id FROM users WHERE cognito_id = $1", cognito_id)
+        .fetch_optional(pool.get_ref())
+        .await?
+        .ok_or_else(|| AppError::NotFound("User not found".into()))?;
+
     // Log the full incoming request
     info!(
         "Attempting to create travel entry. Payload: {:?}, User ID: {}",
         serde_json::to_value(&*entry).unwrap_or_default(),
-        entry.user_id
+        user.id
     );
 
     // Validate input
@@ -22,7 +38,7 @@ pub async fn create_travel_entry(
         let error_msg = "Title cannot be empty";
         error!(
             "Validation error creating travel entry. User ID: {}, Error: {}",
-            entry.user_id, error_msg
+            user.id, error_msg
         );
         return Err(AppError::ValidationError(error_msg.to_string()));
     }
@@ -34,7 +50,7 @@ pub async fn create_travel_entry(
         VALUES ($1, $2, $3, $4, $5, $6, $7, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
         RETURNING id, user_id, title, description, location, latitude, longitude, visit_date, created_at, updated_at
         "#,
-        entry.user_id,
+        user.id,
         entry.title,
         entry.description,
         entry.location,
@@ -57,7 +73,7 @@ pub async fn create_travel_entry(
         Err(err) => {
             error!(
                 "Database error creating travel entry. User ID: {}, Error: {:?}",
-                entry.user_id,
+                user.id,
                 err
             );
             Err(err.into())
