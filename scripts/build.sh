@@ -8,8 +8,13 @@ else
     exit 1
 fi
 
+# Export AWS credentials for AWS CLI
+export AWS_ACCESS_KEY_ID
+export AWS_SECRET_ACCESS_KEY
+export AWS_REGION
+
 # Validate required variables
-required_vars=("AWS_REGION" "ECR_REPOSITORY_NAME" "APP_NAME")
+required_vars=("AWS_REGION" "ECR_REPOSITORY_NAME" "APP_NAME" "AWS_ACCESS_KEY_ID" "AWS_SECRET_ACCESS_KEY")
 for var in "${required_vars[@]}"; do
     if [ -z "${!var}" ]; then
         echo "Error: $var is not set in .env file"
@@ -23,7 +28,7 @@ docker build -t ${APP_NAME}:latest -f docker/Dockerfile .
 # Get AWS account ID
 aws_account_id=$(aws sts get-caller-identity --query Account --output text)
 if [ $? -ne 0 ]; then
-    echo "Error: Failed to get AWS account ID"
+    echo "Error: Failed to get AWS account ID. AWS credentials may be invalid."
     exit 1
 fi
 
