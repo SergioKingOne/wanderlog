@@ -3,9 +3,12 @@ use actix_web::{web, App, HttpServer};
 use dotenv::dotenv;
 use sqlx::postgres::PgPoolOptions;
 
+mod auth;
 mod errors;
 mod handlers;
 mod models;
+
+use crate::auth::middleware::AuthMiddleware;
 use crate::handlers::{travel_entry, upload, user};
 
 #[actix_web::main]
@@ -38,6 +41,7 @@ async fn main() -> std::io::Result<()> {
 
         App::new()
             .wrap(cors)
+            .wrap(AuthMiddleware)
             .app_data(web::Data::new(pool.clone()))
             .service(
                 web::scope("/api").service(
