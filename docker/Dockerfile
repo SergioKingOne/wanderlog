@@ -1,23 +1,38 @@
-# Use an official Node runtime as a parent image
-FROM node:18-alpine
+FROM rust:1.82.0-slim as builder
 
-# Set the working directory
-WORKDIR /app
+# Install OpenSSL development packages and pkg-config
+RUN apt-get update && apt-get install -y \
+    pkg-config \
+    libssl-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy package.json and package-lock.json
-COPY app/package*.json ./
+# Create a new empty shell project
+WORKDIR /usr/src/app
+COPY . .
 
-# Install dependencies
-RUN npm install --production
+# Build the application with SQLx offline mode
+ENV SQLX_OFFLINE=true
+RUN cargo build --release
 
-# Copy the rest of the application code
-COPY app/src ./src
+# Runtime stage
+FROM debian:bookworm-slim
 
-# Copy environment variables
+# Install SSL libraries required at runtime
+RUN apt-get update && apt-get install -y \
+    libssl3 \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /usr/local/bin
+
+# Copy the binary from builder
+COPY --from=builder /usr/src/app/target/release/wanderlog .
+
+# Copy environment file
 COPY app/.env.example ./.env
 
 # Expose port
 EXPOSE 5000
 
-# Start the application
-CMD ["npm", "start"]
+# Run the binary
+CMD ["./wanderlog"]
