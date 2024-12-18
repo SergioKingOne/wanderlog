@@ -30,7 +30,7 @@ module "ecs" {
   security_group_ids    = [module.vpc.ecs_security_group_id]
   ecr_repository_url    = module.ecr.repository_url
   app_port              = var.app_port
-  alb_security_group_id = var.alb_security_group_id
+  alb_security_group_id = module.vpc.alb_security_group_id
   desired_count         = var.desired_count
   db_endpoint           = module.rds.db_endpoint
   db_username           = var.db_username

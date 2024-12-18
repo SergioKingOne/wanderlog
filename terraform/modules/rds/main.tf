@@ -49,6 +49,10 @@ resource "aws_db_instance" "default" {
   auto_minor_version_upgrade = true
   backup_retention_period    = 7
 
+  provisioner "local-exec" {
+    command = "PGPASSWORD=${var.db_password} psql -h ${self.endpoint} -U ${var.db_username} -d ${var.db_name} -f ../app/src/db/schema.sql"
+  }
+
   tags = {
     Name = "wanderlog-db"
   }

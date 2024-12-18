@@ -6,6 +6,15 @@ resource "aws_ecs_cluster" "main" {
   }
 }
 
+resource "aws_cloudwatch_log_group" "ecs" {
+  name              = "/ecs/${var.cluster_name}"
+  retention_in_days = 30
+
+  tags = {
+    Name = "${var.cluster_name}-logs"
+  }
+}
+
 resource "aws_ecs_task_definition" "app" {
   family                   = "${var.cluster_name}-task"
   network_mode             = "awsvpc"
@@ -52,6 +61,10 @@ resource "aws_ecs_task_definition" "app" {
       }
     }
   ])
+
+  depends_on = [
+    aws_cloudwatch_log_group.ecs
+  ]
 }
 
 resource "aws_ecs_service" "app" {
@@ -93,10 +106,11 @@ resource "aws_lb" "app" {
 }
 
 resource "aws_lb_target_group" "app" {
-  name     = "${var.cluster_name}-tg"
-  port     = var.app_port
-  protocol = "HTTP"
-  vpc_id   = var.vpc_id
+  name        = "${var.cluster_name}-tg"
+  port        = var.app_port
+  protocol    = "HTTP"
+  vpc_id      = var.vpc_id
+  target_type = "ip"
 
   health_check {
     path                = "/health"
