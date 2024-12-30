@@ -13,13 +13,15 @@ module "ecr" {
 }
 
 module "rds" {
-  source             = "./modules/rds"
-  vpc_id             = module.vpc.vpc_id
-  subnet_ids         = module.vpc.private_subnets_ids
-  db_username        = var.db_username
-  db_password        = var.db_password
-  db_name            = var.db_name
-  security_group_ids = [module.vpc.ecs_security_group_id]
+  source                    = "./modules/rds"
+  vpc_id                    = module.vpc.vpc_id
+  subnet_ids                = module.vpc.private_subnets_ids
+  db_username               = var.db_username
+  db_password               = var.db_password
+  db_name                   = var.db_name
+  security_group_ids        = [module.vpc.ecs_security_group_id]
+  bastion_security_group_id = module.bastion.bastion_security_group_id
+  bastion_public_ip         = module.bastion.bastion_public_ip
 }
 
 module "ecs" {
@@ -49,4 +51,10 @@ module "s3" {
 
 module "cognito" {
   source = "./modules/cognito"
+}
+
+module "bastion" {
+  source           = "./modules/bastion"
+  vpc_id           = module.vpc.vpc_id
+  public_subnet_id = module.vpc.public_subnets_ids[0]
 }
