@@ -51,48 +51,7 @@ Wanderlog allows users to create and manage travel entries with location data an
 
 ### Architecture Diagram
 
-```mermaid
-graph TB
-    subgraph "AWS Cloud"
-        subgraph "VPC (10.0.0.0/16)"
-            subgraph "Public Subnets"
-                ALB[Application Load Balancer]
-                NAT1[NAT Gateway AZ1]
-                NAT2[NAT Gateway AZ2]
-            end
-
-            subgraph "Private Subnets"
-                ECS[ECS Cluster]
-                RDS[(RDS PostgreSQL<br/>db.t3.micro)]
-            end
-        end
-
-        S3[(S3 Bucket<br/>wanderlog-uploads)]
-        ECR[(ECR Registry<br/>web-app-repo)]
-
-        Internet((Internet))
-        Client((Client))
-
-        %% Connections
-        Client --> Internet
-        Internet --> ALB
-        ALB --> ECS
-        ECS --> RDS
-        ECS --> S3
-        ECS --> ECR
-
-        %% NAT Gateway connections
-        ECS --> NAT1 & NAT2
-        NAT1 & NAT2 --> Internet
-    end
-
-    %% Styling
-    classDef aws fill:#FF9900,stroke:#232F3E,stroke-width:2px,color:white;
-    classDef external fill:#fff,stroke:#232F3E,stroke-width:2px;
-
-    class ALB,ECS,RDS,S3,ECR,NAT1,NAT2 aws;
-    class Internet,Client external;
-```
+![Architecture Diagram](assets/wanderlog.png)
 
 ### AWS Resources
 
