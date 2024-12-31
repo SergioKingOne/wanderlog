@@ -37,13 +37,13 @@ variable "db_password" {
 variable "db_name" {
   description = "Name of the database"
   type        = string
-  default     = "webappdb"
+  default     = "wanderlog-db"
 }
 
 variable "ecs_cluster_name" {
   description = "Name of the ECS cluster"
   type        = string
-  default     = "web-app-cluster"
+  default     = "wanderlog-cluster"
 }
 
 variable "ecr_repository_name" {

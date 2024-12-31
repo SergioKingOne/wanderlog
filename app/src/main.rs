@@ -1,5 +1,5 @@
 use actix_cors::Cors;
-use actix_web::{web, App, HttpServer};
+use actix_web::{web, App, HttpResponse, HttpServer};
 use dotenv::dotenv;
 use sqlx::postgres::PgPoolOptions;
 
@@ -33,6 +33,7 @@ async fn main() -> std::io::Result<()> {
     // Start HTTP server
     HttpServer::new(move || {
         // Create CORS middleware
+        // TODO: I know I should not do this, but it's for fast development
         let cors = Cors::default()
             .allow_any_origin()
             .allow_any_method()
@@ -41,6 +42,10 @@ async fn main() -> std::io::Result<()> {
 
         App::new()
             .wrap(cors)
+            .route(
+                "/health",
+                web::get().to(|| async { HttpResponse::Ok().body("Healthy") }),
+            )
             .wrap(AuthMiddleware)
             .app_data(web::Data::new(pool.clone()))
             .service(

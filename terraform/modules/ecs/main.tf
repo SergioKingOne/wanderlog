@@ -28,7 +28,7 @@ resource "aws_ecs_task_definition" "app" {
   container_definitions = jsonencode([
     {
       name      = "wanderlog-container"
-      image     = var.ecr_repository_url
+      image     = "${var.ecr_repository_url}:latest"
       essential = true
       portMappings = [
         {
@@ -40,7 +40,7 @@ resource "aws_ecs_task_definition" "app" {
       environment = [
         {
           name  = "DATABASE_URL"
-          value = "postgres://${var.db_username}:${var.db_password}@${var.db_endpoint}:5432/${var.db_name}"
+          value = "postgres://${var.db_username}:${var.db_password}@${var.db_endpoint}/${var.db_name}"
         },
         {
           name  = "API_KEY"
