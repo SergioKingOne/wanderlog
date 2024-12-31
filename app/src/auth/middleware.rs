@@ -53,7 +53,7 @@ where
         let service = self.service.clone();
 
         Box::pin(async move {
-            if req.method() == actix_web::http::Method::OPTIONS {
+            if req.path() == "/health" || req.method() == actix_web::http::Method::OPTIONS {
                 let res = service.call(req).await?;
                 return Ok(res.map_into_left_body());
             }

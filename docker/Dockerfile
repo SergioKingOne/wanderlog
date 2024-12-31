@@ -29,7 +29,7 @@ WORKDIR /usr/local/bin
 COPY --from=builder /usr/src/app/target/release/wanderlog .
 
 # Copy environment file
-COPY app/.env.example ./.env
+COPY .env ./.env
 
 # Expose port
 EXPOSE 5000

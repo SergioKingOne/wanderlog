@@ -43,7 +43,7 @@ variable "db_name" {
 variable "ecs_cluster_name" {
   description = "Name of the ECS cluster"
   type        = string
-  default     = "web-app-cluster"
+  default     = "wanderlog-cluster"
 }
 
 variable "ecr_repository_name" {
